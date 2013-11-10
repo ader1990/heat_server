@@ -9,7 +9,7 @@ module.exports = function(db,app){
 	/*---------------*/	
 	app.get('/users',function(req,res){
 	    console.log('--- GET /users ...');
-		User.get_all(db,function(err,users){
+		User.get_all(Fdb,function(err,users){
 			if(err){
 				console.log(err);
 			}
@@ -30,8 +30,16 @@ module.exports = function(db,app){
 				res.send(err);
 			}
 			else{
-				console.log(status);
-				res.send(status);
+				Home.remove_all(db,function(err,status){
+					if(err){
+						console.log(err);
+						res.send(err);
+					}
+					else{
+						console.log(status);
+						res.send(status);
+					}
+				});
 			}
 		});
 	});
@@ -79,9 +87,9 @@ module.exports = function(db,app){
 		});
 	});
 
-	  /*-------------*/
-	 /*-Log-in user-*/
-	/*-------------*/
+	  /*------------------*/
+	 /*-Check user creds-*/
+	/*------------------*/
 	app.post('/user/login',function(req,res){
 		console.log('--- POST /user/login ...');
 		
@@ -127,7 +135,7 @@ module.exports = function(db,app){
 	  /*---------------------*/
 	 /*-Get user home stats-*/
 	/*---------------------*/	
-	app.get('user/:user_id/home_stats', function(req,res){
+	app.get('/user/:user_id/home_stats', function(req,res){
 		console.log('---GET user/:user_id/home_stats ...');
 		var params = {
 			'user_id': req.params.user_id
@@ -148,13 +156,16 @@ module.exports = function(db,app){
 	  /*---------------*/
 	 /*-Set user home-*/
 	/*---------------*/
-	app.post('user/set_home', function(req,res){
-		console.log('---POST user/add_home');
+	app.post('/user/set_home', function(req,res){
+		console.log('---POST user/set_home');
 		var params = {
-			'user_id':req.body.user_id,
-			'home_id':req.body.user_id,
-			'home_lat':req.body.latitude,
-			'home_long':req.body.longitude
+			'user_id':req.body.user_id,      //user id (owner of the house)
+			'home_id':req.body.home_id,	     //home_id (product key from thermostat
+			'home_lat':req.body.home_lat,    //home GPS latitute
+			'home_long':req.body.home_long,  //home GPS longitude
+			'nr_rooms':req.body.nr_rooms,    //Number of rooms
+			'lr_bool':req.body.lr_bool,      //Boolean indicating wether it has a living room or not
+			'home_type':req.body.home_type   //Home type (0,1,2,3) -> (detached,semi-detached,terrace,flat)
 		}
 		User.set_home(db,params,function(err,status){
 			if(err){
@@ -174,15 +185,28 @@ module.exports = function(db,app){
 /**************************************************************************************/
 /**************************************************************************************/
 	
-	
+	app.get('/homes',function(req,res){
+		console.log('--- GET /homes ...');
+		Home.get_all(db,function(err,homes){
+			if(err){
+				console.log('>>>>>FAILURE');
+				console.log(err);
+				res.send(500,err);
+			}else{
+				console.log('<<<<<SUCCESS');
+				res.send(homes);
+			}
+		});
+	});
 	  /*---------------*/
 	 /*-Get home info-*/
 	/*---------------*/
-	app.get('/home/:house_id/info',function(req,res){
-		console.log('---GET home/:house_id/info');
+	app.get('/home/:home_id/info',function(req,res){
+		console.log('---GET home/:home_id/info');
 		var params = {
-			house_id : req.params.house_id
+			'home_id' : req.params.home_id
 		};	
+		console.log(params);
 		Home.get_info(db,params,function(err,home_info){
 			if(err){
 				console.log('>>>>>FAILURE!');

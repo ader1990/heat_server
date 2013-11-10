@@ -36,8 +36,54 @@ exports.destroy = function(db,params,cb){
 		
 	});
 };*/
+exports.remove_all = function(db,cb){
+	db.collection('homes').remove({},function(err,count){
+		if(err) cb(err,null);
+		else{
+			cb(null,200);
+		}
+	});
+};
 
-exports.get_info = function(db,params, cb){
+exports.remove_by_user_id = function(db,params,cb){
+	db.collection('homes').findAndModify({'user_id':params.user_id},{},{},{remove:true},function(err,del_home){
+		if(err) cb(err,null);
+		else{
+			cb(null,200);
+		}
+	});
+};
+exports.remove_by_home_id = function(db,params,cb){
+	db.collection('homes').findAndModify({'home_id':params.home_id},{},{},{remove:true},function(err,del_home){
+		if(err) cb(err,null);
+		else{
+			cb(null,200);
+		}
+	});
+};
+
+exports.get_all = function(db,cb){
+	db.collection('homes').find({},{},{},function(err,homes){
+		if(err){
+			cb(err,null);
+		}
+		else{
+			console.log('Inside get_all -  no error');
+			if(homes){
+				homes.toArray(function(err,docs){
+					if(err) cb(err,null);
+					else {
+						console.log('Inside get_all -  homes toArray');
+						cb(null,docs);
+					}
+				});
+			}else{
+				cb('No homes found',null);
+			}
+		}
+	});
+};
+exports.get_info = function(db,params,cb){
 	db.collection('homes').findOne({'home_id':params.home_id}, function(err, home_info){
 		if(err){
 			cb(err, null);

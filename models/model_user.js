@@ -45,12 +45,6 @@ exports.get_homes = function(db,params,cb){
 	});
 };
 
-exports.remove_home = function(db,params,cb){
-	db.collection('users').update({'user_id':params.user_id},{$pull:{'homes':{'home_id':params.home_id}}},{safe:true},function(err,user_doc){
-		if(err) cb(err,null);
-		else cb(null,user_doc);
-	});
-};
 
 
 
@@ -83,7 +77,10 @@ exports.remove = function(db, params, cb){
 exports.login = function (db,params,cb){
 	db.collection('users').findOne({'user_id':params.user_id,'user_pass':params.user_pass},function(err,user_doc){
 		if(err) cb(err,null);
-		else cb(null,200);
+		else{
+			if(user_doc) cb(null,200);
+			else cb(404,null);
+		}
 	});
 };
 
@@ -115,13 +112,17 @@ exports.user_gps_delay = function (db,params, cb){
 //binds a home to a user
 exports.set_home = function (db, params, cb){
 	
-	var room_nr = req.body.nr_rooms;
-	var lr_bool = req.body.lr_bool;
-	var home_type = req.body.home_type;
+	var room_nr = params.nr_rooms;
+	var lr_bool = params.lr_bool;
+	var home_type = params.home_type;
+	
 	ht(room_nr,lr_bool,home_type,function(heat_time){
 		var home = {
 			'home_id':params.home_id,
-			'location':params.location,
+			'location':{
+					'lat':params.home_lat,
+					'long':params.home_long
+			},
 			'heat_time':heat_time
 		}
 		db.collection('homes').insert(home, function(err, home_doc){
