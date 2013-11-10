@@ -84,7 +84,7 @@ exports.login = function (db,params,cb){
 	});
 };
 
-exports.user_house_stats = function (db,params, cb){
+exports.user_home_stats = function (db,params, cb){
 	db.collection('users').findOne({'user_id': params.user_id}, function(err, user){
 		if(err) {
 			cb(err, null);
@@ -96,7 +96,7 @@ exports.user_house_stats = function (db,params, cb){
 	});
 };
 
-//time after the heating should be switched off when the user has exited the house
+//time after the heating should be switched off when the user has exited the home
 exports.user_gps_delay = function (db,params, cb){
   db.collection("users").findOne({'user_id':user_id}, function(err, user_doc){
     if(err){
@@ -118,15 +118,17 @@ exports.set_home = function (db, params, cb){
 	
 	ht(room_nr,lr_bool,home_type,function(heat_time){
 		var home = {
+			'user_id':params.user_id,
 			'home_id':params.home_id,
 			'location':{
 					'lat':params.home_lat,
 					'long':params.home_long
 			},
-			'heat_time':heat_time
+			'heat_time':heat_time,
+			'heating_status':false
 		}
 		db.collection('homes').insert(home, function(err, home_doc){
-			db.collection('users').update({'user_id':params.user_id}, {$set: {'house_id': home_doc[0].house_id}}, function(err, count){
+			db.collection('users').update({'user_id':params.user_id}, {$set: {'home_id': home_doc[0].home_id}}, function(err, count){
 				if(err){
 					cb(err, null);
 				}else{

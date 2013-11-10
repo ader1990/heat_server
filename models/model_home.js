@@ -19,7 +19,7 @@ exports.destroy = function(db,params,cb){
 	db.collection('homes').findOne({'home_id':params.home_id},function(err,home_doc){
 		if(err) cb(err,null);
 		else{
-			if(!home_doc) cb("No house with this home_id",null);
+			if(!home_doc) cb("No home with this home_id",null);
 			else{
 				db.collection('homes').findAndModify({'home_id':params.home_id},{},{},{remove:true},function(err,home_doc){
 					if(err) cb(err,null);
@@ -49,7 +49,12 @@ exports.remove_by_user_id = function(db,params,cb){
 	db.collection('homes').findAndModify({'user_id':params.user_id},{},{},{remove:true},function(err,del_home){
 		if(err) cb(err,null);
 		else{
-			cb(null,200);
+			console.log(del_home);
+			console.log('User id: ' + del_home.user_id);
+			db.collection('users').update({'user_id':del_home.user_id},{$unset:{'home_id':1}},{safe:true},function(err,users_cursor){
+				if(err) cb(err,null);
+				else cb(null,200);
+			});
 		}
 	});
 };
@@ -57,7 +62,12 @@ exports.remove_by_home_id = function(db,params,cb){
 	db.collection('homes').findAndModify({'home_id':params.home_id},{},{},{remove:true},function(err,del_home){
 		if(err) cb(err,null);
 		else{
-			cb(null,200);
+			console.log(del_home);
+			console.log('User id: ' + del_home.user_id);
+			db.collection('users').update({'user_id':del_home.user_id},{$unset:{'home_id':1}},{safe:true},function(err,users_cursor){
+				if(err) cb(err,null);
+				else cb(null,200);
+			});
 		}
 	});
 };
@@ -83,6 +93,18 @@ exports.get_all = function(db,cb){
 		}
 	});
 };
+exports.get_location = function(db,params,cb){
+	db.collection('homes').findOne({'home_id':params.home_id},function(err,home_doc){
+		if(err) cb(err,null);
+		else cb(null,home_doc.location);
+	});
+};
+exports.get_heating_status = function(db,params,cb){
+	db.collection('homes').findOne({'home_id':params.home_id},function(err,home_doc){
+		if(err) cb(err,null);
+		else cb(null,home_doc.heating_status);
+	});
+};
 exports.get_info = function(db,params,cb){
 	db.collection('homes').findOne({'home_id':params.home_id}, function(err, home_info){
 		if(err){
@@ -94,17 +116,11 @@ exports.get_info = function(db,params,cb){
 	
 };
 exports.switch_heating = function (db, params, cb){
-	db.collection('users').findOne({'user_id': params.item_id}, function(err, user){
+	db.collection('homes').update({'home_id': params.home_id},{$set:{'heating_status': params.heating_status}}, function(err, count){
 		if(err){
-			cb(error, null);
+			cb(err, null);
 		}else{
-			db.collection('homes').update({'house_id': user.house_id},{$set:{'heating_status': params.heating_status}}, function(err, count){
-				if(err){
-					cb(err, null);
-				}else{
-					cb(null, 200);
-				}
-			});
+			cb(null, 200);
 		}
 	});
 }

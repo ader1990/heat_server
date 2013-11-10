@@ -9,7 +9,7 @@ module.exports = function(db,app){
 	/*---------------*/	
 	app.get('/users',function(req,res){
 	    console.log('--- GET /users ...');
-		User.get_all(Fdb,function(err,users){
+		User.get_all(db,function(err,users){
 			if(err){
 				console.log(err);
 			}
@@ -87,6 +87,7 @@ module.exports = function(db,app){
 		});
 	});
 
+	
 	  /*------------------*/
 	 /*-Check user creds-*/
 	/*------------------*/
@@ -140,14 +141,14 @@ module.exports = function(db,app){
 		var params = {
 			'user_id': req.params.user_id
 		}
-		User.user_house_stats(db,params, function (err, home_info){
+		User.user_home_stats(db,params, function (err, home_info){
 			if(err){
-				console.log('>>>>>User.user_house_stats : FAILURE!');
+				console.log('>>>>>User.user_home_stats : FAILURE!');
 				console.log(err);
 				res.send(500,err);
 			}
 			else{
-				console.log('>>>>>User.user_house_stats : SUCCESS!');
+				console.log('>>>>>User.user_home_stats : SUCCESS!');
 				res.send(home_info);
 			}
 		});
@@ -159,7 +160,7 @@ module.exports = function(db,app){
 	app.post('/user/set_home', function(req,res){
 		console.log('---POST user/set_home');
 		var params = {
-			'user_id':req.body.user_id,      //user id (owner of the house)
+			'user_id':req.body.user_id,      //user id (owner of the home)
 			'home_id':req.body.home_id,	     //home_id (product key from thermostat
 			'home_lat':req.body.home_lat,    //home GPS latitute
 			'home_long':req.body.home_long,  //home GPS longitude
@@ -185,6 +186,9 @@ module.exports = function(db,app){
 /**************************************************************************************/
 /**************************************************************************************/
 	
+	  /*---------------*/
+	 /*-Get all homes-*/
+	/*---------------*/
 	app.get('/homes',function(req,res){
 		console.log('--- GET /homes ...');
 		Home.get_all(db,function(err,homes){
@@ -198,6 +202,66 @@ module.exports = function(db,app){
 			}
 		});
 	});
+	
+	  /*------------------------*/
+	 /*-Remove home by home_id-*/
+	/*------------------------*/
+	app.post('/home/remove_by_home_id',function(req,res){
+		var params = {
+			'home_id' : req.body.home_id
+		};	
+		Home.remove_by_home_id(db,params,function(err,status){
+			if(err){
+				console.log('>>>>>FAILURE!');
+				console.log(err);
+				res.send(500,err);
+			}
+			else{
+				console.log('<<<<<SUCCESS');
+				res.send(status);
+			}
+		});
+	});
+	
+	  /*------------------------*/
+	 /*-Remove home by user_id-*/
+	/*------------------------*/
+	app.post('/home/remove_by_user_id',function(req,res){
+		var params = {
+			'user_id' : req.params.user_id
+		};	
+		Home.remove_by_user_id(db,params,function(err,status){
+			if(err){
+				console.log('>>>>>FAILURE!');
+				console.log(err);
+				res.send(500,err);
+			}
+			else{
+				console.log('<<<<<SUCCESS');
+				res.send(status);
+			}
+		});
+	});
+	
+	  /*-------------------------*/
+	 /*-Get home heating status-*/
+	/*-------------------------*/	
+	app.get('/home/:home_id/heating_status',function(req,res){
+		console.log('---GET /home/:home_id/heating_status');
+		var params = {
+			'home_id' : req.params.home_id
+		}
+		Home.get_heating_status(db,params,function(err,heating_status){
+			if(err){
+				console.log('Error: ' + err);
+				res.send(err);
+			}else{
+				console.log('Heating status: ' + heating_status);
+				res.send(heating_status);
+			}
+		});
+	});	
+	
 	  /*---------------*/
 	 /*-Get home info-*/
 	/*---------------*/
@@ -223,9 +287,19 @@ module.exports = function(db,app){
 	  /*-------------------*/
 	 /*-Get home location-*/
 	/*-------------------*/
-	app.get('/home/location', function(req, res){
+	app.get('/home/:home_id/location', function(req, res){
 		console.log('--- GET /home/location ...');
-		//Home.get_location;
+		var params = {
+			'home_id':req.params.home_id
+		}
+		Home.get_location(db,params,function(err,location){
+			if(err){
+				console.log(err);
+				res.send(err);
+			}else{
+				res.send(location);
+			}
+		});
 	});
 	
 	  /*-----------------*/
@@ -235,15 +309,17 @@ module.exports = function(db,app){
 		console.log('--- POST /home/turn_on ...');
 		//Home.turn_on(params);
 
-			var params = {
-			'user_id': req.body.user_id,
- 			'heating_status': req.body.heating_status
+		var params = {
+			'home_id': req.body.home_id,
+ 			'heating_status': true
 		};
 
-		Home.switch_heating(params, function(err, response){
+		Home.switch_heating(db, params, function(err, response){
 			if(err){
+				console.log(err);
 				res.send(err);
 			}else{
+				console.log(response)
 				res.send(response);
 			}
 		});
@@ -257,8 +333,8 @@ module.exports = function(db,app){
 		//Home.turn_on(params);
 
 		var params = {
-		'user_id': req.body.user_id,
- 		'heating_status': req.body.heating_status
+			'home_id': req.body.home_id,
+			'heating_status': false
 		};
 		Home.switch_heating(db, params, function(err, response){
 			if(err){
