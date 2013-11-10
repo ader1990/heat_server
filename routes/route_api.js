@@ -88,7 +88,6 @@ module.exports = function(db,app){
 	app.post('/user/register', function(req,res){
 		console.log('--- POST /user/register ...');
 	    var params = {
-			home_id:req.body.home_id,
 			user_id:req.body.user_id,
 			user_pass:req.body.user_pass
 		}
