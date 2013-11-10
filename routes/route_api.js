@@ -117,8 +117,9 @@ module.exports = function(db,app){
 	app.post('/user/register', function(req,res){
 		console.log('--- POST /user/register ...');
 	    var params = {
-			user_id:req.body.user_id,
-			user_pass:req.body.user_pass
+			'user_id':req.body.user_id,
+			'user_pass':req.body.user_pass,
+			'user_mail':req.body.user_mail
 		}
 		User.register(db,params,function(err,status){
 			if(err) {
