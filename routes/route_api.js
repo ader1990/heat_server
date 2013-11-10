@@ -43,9 +43,9 @@ module.exports = function(db,app){
 			}
 		});
 	});
-	  /*---------------*/
-	 /*-Get all users-*/
-	/*---------------*/	
+	  /*-------------------*/
+	 /*-Delete user by id-*/
+	/*-------------------*/	
 	app.get('/user/:user_id/delete', function (req, res){
 		var user_id = req.params.user_id;
 		var params  = {'user_id':user_id};
@@ -76,7 +76,7 @@ module.exports = function(db,app){
 	app.get('/user/:user_id/info', function(req,res){
 		console.log('--- GET /user/:user_id/info ...');
 		var params = {
-			user_id : req.params.user_id
+			'user_id'sz : req.params.user_id
 		}
 		User.get_info(db,params,function(err,user_doc){
 			if(err) console.log(err);
@@ -95,8 +95,8 @@ module.exports = function(db,app){
 		console.log('--- POST /user/login ...');
 		
 		var params = { 
-			user_id : req.body.user_id,
-			user_pass : req.body.user_pass
+			'user_id' : req.body.user_id,
+			'user_pass' : req.body.user_pass
 		}
 		
 		User.login(db,params,function(err,status){
@@ -325,13 +325,35 @@ module.exports = function(db,app){
 			}
 		});
 	});
+
+	  /*-----------------*/
+	 /*-Log temperature-*/
+	/*-----------------*/
+	app.post('/home/log_temp'),function(req,res){
+		console.log('--- POST /home/log_temp ...');
+		
+		var params = {
+			'home_id':req.body.home_id,
+			'temp':req.body.temp
+		}
+		
+		Home.log_temp(db,params,function(err,status){
+			if(err) {
+				console.log(err);
+				res.send(err);
+			}else{
+				console.log(status);
+				res.send(status);
+			}
+		});
+	});
 	
 	  /*------------------*/
 	 /*-Turn off heating-*/
 	/*------------------*/
 	app.post('/home/turn_off',function(req,res){
 		console.log('--- POST /home/turn_off ...');
-		//Home.turn_on(params);
+		
 
 		var params = {
 			'home_id': req.body.home_id,

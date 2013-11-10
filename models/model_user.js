@@ -122,19 +122,22 @@ exports.set_home = function (db, params, cb){
 			'home_id':params.home_id,
 			'location':{
 					'lat':parseFloat(params.home_lat),
-					'long':parseFloat(params.home_long)
+					'long':parseFloat(params.home_long)s
 			},
 			'heat_time':heat_time,
 			'heating_status':false
 		}
-		db.collection('homes').insert(home, function(err, home_doc){
-			db.collection('users').update({'user_id':params.user_id}, {$set: {'home_id': home_doc[0].home_id}}, function(err, count){
-				if(err){
-					cb(err, null);
-				}else{
-					cb(null, 200);
-				}
-			});
+		db.collection('homes').update({'home_id':params.home_id},home,{upsert:true,safe:true}, function(err, home_doc){
+			if(err) cb(err,null);
+			else{
+				db.collection('users').update({'user_id':params.user_id}, {$set: {'home_id': home_doc[0].home_id}}, function(err, count){
+					if(err){
+						cb(err, null);
+					}else{
+						cb(null, 200);
+					}
+				});
+			}
 		});
 	});
 };
