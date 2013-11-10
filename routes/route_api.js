@@ -186,7 +186,16 @@ module.exports = function(db,app){
 /*							     HOME ROUTES    									  */
 /**************************************************************************************/
 /**************************************************************************************/
-	
+	app.get('/homes/delete',function(req,res){
+		Home.remove_all(db,function(err,status){
+			if(err){
+				console.log(err);
+				res.send(err);
+			}
+			else 
+				res.send(status);
+		});
+	});
 	  /*---------------*/
 	 /*-Get all homes-*/
 	/*---------------*/

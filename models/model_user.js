@@ -128,7 +128,10 @@ exports.set_home = function (db, params, cb){
 			'heating_status':false
 		}
 		db.collection('homes').findAndModify({'home_id':params.home_id},{},home,{upsert:true,safe:true}, function(err, home_doc){
-			if(err) cb(err,null);
+			if(err){
+				console.log(err);
+				cb(err,null);
+			}
 			else{
 				db.collection('users').update({'user_id':params.user_id}, {$set: {'home_id': home_doc.home_id}}, function(err, count){
 					if(err){
