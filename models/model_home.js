@@ -115,7 +115,7 @@ exports.get_info = function(db,params,cb){
 	});
 	
 };
-exports.log_temeperatture = function(db,params,cb){
+exports.log_temep = function(db,params,cb){
 	db.collection('homes').update({'home_id':params.home_id},{$set:{'temp':params.temp}},function(err,count){
 		if(err) cb(err,null);
 		else cb(null,200);

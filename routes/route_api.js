@@ -167,7 +167,7 @@ module.exports = function(db,app){
 			'home_long':parseFloat(req.body.home_long),  //home GPS longitude
 			'nr_rooms':parseInt(req.body.nr_rooms),    //Number of rooms
 			'lr_bool':parseInt(req.body.lr_bool),      //Boolean indicating wether it has a living room or not
-			'home_type':1  //Home type (0,1,2,3) -> (detached,semi-detached,terrace,flat)
+			'home_type':1  //Home type (0,1,2,3) -> (detached,semi-detached,terrace,flat) 
 		}
 		console.log('PARAMS');
 		console.log(params);
