@@ -329,7 +329,7 @@ module.exports = function(db,app){
 	  /*-----------------*/
 	 /*-Log temperature-*/
 	/*-----------------*/
-	app.post('/home/log_temp'),function(req,res){
+	app.post('/home/log_temp',function(req,res){
 		console.log('--- POST /home/log_temp ...');
 		
 		var params = {

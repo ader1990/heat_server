@@ -122,7 +122,7 @@ exports.set_home = function (db, params, cb){
 			'home_id':params.home_id,
 			'location':{
 					'lat':parseFloat(params.home_lat),
-					'long':parseFloat(params.home_long)s
+					'long':parseFloat(params.home_long)
 			},
 			'heat_time':heat_time,
 			'heating_status':false
