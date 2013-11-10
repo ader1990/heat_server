@@ -196,11 +196,8 @@ module.exports = function(db,app){
 			'user_id': req.body.user_id,
  			'heating_status': req.body.heating_status
 		};
-<<<<<<< HEAD
+
 		Home.switch_heating(params, function(err, response){
-=======
-		Home.turn_on_heating(db, params, function(err, response){
->>>>>>> Updating routing, remove_user()
 			if(err){
 				res.send(err);
 			}else{
