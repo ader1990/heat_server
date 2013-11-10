@@ -19,6 +19,25 @@ module.exports = function(db,app){
 			}
 		});
 	});
+	
+	  /*------------------*/
+	 /*-Delete all users-*/
+	/*------------------*/	
+	app.post('/users/delete',function(req,res){
+		User.remove_all(db,function(err,status){
+			if(err){
+				console.log(err);
+				res.send(err);
+			}
+			else{
+				console.log(status);
+				res.send(status);
+			}
+		});
+	});
+	  /*---------------*/
+	 /*-Get all users-*/
+	/*---------------*/	
 	app.get('/user/:user_id/delete', function (req, res){
 		var user_id = req.params.user_id;
 		var params  = {'user_id':user_id};
@@ -30,6 +49,7 @@ module.exports = function(db,app){
 			}
 		});
 	});
+	
       /*---------------*/
 	 /*-Get user home-*/
 	/*---------------*/

@@ -1,5 +1,14 @@
 var geolib = require('./../node_modules/geolib/geolib.js');
 
+
+exports.remove_all = function(db,cb){
+	console.log('Inside remove all!');
+	db.collection('users').remove({},function(err,count){
+		if(err) cb(err,null);
+		else cb(null,200);
+	});
+};
+
 exports.get_all = function(db,cb){
 	console.log('Inside get_all');
 	db.collection('users').find({},{},{},function(err,users){
