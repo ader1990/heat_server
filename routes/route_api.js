@@ -163,11 +163,11 @@ module.exports = function(db,app){
 		var params = {
 			'user_id':req.body.user_id,      //user id (owner of the home)
 			'home_id':req.body.home_id,	     //home_id (product key from thermostat
-			'home_lat':req.body.home_lat,    //home GPS latitute
-			'home_long':req.body.home_long,  //home GPS longitude
-			'nr_rooms':req.body.nr_rooms,    //Number of rooms
-			'lr_bool':req.body.lr_bool,      //Boolean indicating wether it has a living room or not
-			'home_type':req.body.home_type   //Home type (0,1,2,3) -> (detached,semi-detached,terrace,flat)
+			'home_lat':parseFloat(req.body.home_lat),    //home GPS latitute
+			'home_long':parseFloat(req.body.home_long),  //home GPS longitude
+			'nr_rooms':parseInt(req.body.nr_rooms),    //Number of rooms
+			'lr_bool':parseInt(req.body.lr_bool),      //Boolean indicating wether it has a living room or not
+			'home_type':parseInt(req.body.home_type)   //Home type (0,1,2,3) -> (detached,semi-detached,terrace,flat)
 		}
 		User.set_home(db,params,function(err,status){
 			if(err){
