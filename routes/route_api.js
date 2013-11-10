@@ -76,7 +76,7 @@ module.exports = function(db,app){
 	app.get('/user/:user_id/info', function(req,res){
 		console.log('--- GET /user/:user_id/info ...');
 		var params = {
-			'user_id'sz : req.params.user_id
+			'user_id' : req.params.user_id
 		}
 		User.get_info(db,params,function(err,user_doc){
 			if(err) console.log(err);
