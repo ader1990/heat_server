@@ -133,7 +133,9 @@ exports.set_home = function (db, params, cb){
 				cb(err,null);
 			}
 			else{
-				db.collection('users').update({'user_id':params.user_id}, {$set: {'home_id': home_doc.home_id}}, function(err, count){
+				console.log(home_doc);
+				console.log(home_doc.home_id);
+				db.collection('users').update({'user_id':params.user_id}, {$set: {'home_id': params.home_id}}, function(err, count){
 					if(err){
 						cb(err, null);
 					}else{
